@@ -1,0 +1,125 @@
+[
+    {
+        "id": "e0241b25.e1c018",
+        "type": "mqtt in",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "topic": "/pishield/pingtest2",
+        "qos": "1",
+        "broker": "858b78cb.00a038",
+        "x": 186,
+        "y": 321,
+        "wires": [
+            [
+                "f3b4dc48.7a2b2"
+            ]
+        ]
+    },
+    {
+        "id": "fa833e4a.530df",
+        "type": "mqtt out",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "topic": "/pishield/pingtest2",
+        "qos": "0",
+        "retain": "",
+        "broker": "858b78cb.00a038",
+        "x": 502,
+        "y": 97,
+        "wires": []
+    },
+    {
+        "id": "e98937ae.598f98",
+        "type": "inject",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "topic": "timestamp",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": ".01",
+        "crontab": "",
+        "once": false,
+        "x": 258.5,
+        "y": 97,
+        "wires": [
+            [
+                "fa833e4a.530df",
+                "f3b4dc48.7a2b2"
+            ]
+        ]
+    },
+    {
+        "id": "faaa021b.feef4",
+        "type": "debug",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 676.5,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f3b4dc48.7a2b2",
+        "type": "function",
+        "z": "eeecba5a.679b68",
+        "name": "deltaT",
+        "func": "\nvar prev = flow.get('prev')||0;\n\nvar d = new Date();\nvar n = d.getMilliseconds();\nvar msg2;\n\nif (msg.topic == \"timestamp\"){\n    flow.set('prev', n);\n}\n   \nelse {\n    if (n<prev) {\n        console.log(\"OVERFLOW!\");\n        n=n+1000;\n    }\n    //console.log(\"tDiff = \",n,\"-\",prev,\"=\",n-prev);\n    tdiff = n-prev;\n    msg2 = { payload:tdiff };\n    return [msg, msg2];\n}\nreturn msg",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 474.5,
+        "y": 320,
+        "wires": [
+            [
+                "faaa021b.feef4"
+            ],
+            [
+                "8f468a70.b183d8"
+            ]
+        ]
+    },
+    {
+        "id": "a7d0a1ba.1034f",
+        "type": "file",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "filename": "/Users/johnty/.node-red/test_output.txt",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "x": 767,
+        "y": 322,
+        "wires": []
+    },
+    {
+        "id": "8f468a70.b183d8",
+        "type": "debug",
+        "z": "eeecba5a.679b68",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 687,
+        "y": 251,
+        "wires": []
+    },
+    {
+        "id": "858b78cb.00a038",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "raspberrypi.local",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    }
+]
